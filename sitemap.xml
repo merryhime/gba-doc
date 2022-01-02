@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://merryhime.github.io/gba-doc/</loc>
+         <lastmod>2022-01-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://merryhime.github.io/gba-doc/CPU/</loc>
+         <lastmod>2022-01-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://merryhime.github.io/gba-doc/CPU/Bus%20Interface/</loc>
+         <lastmod>2022-01-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://merryhime.github.io/gba-doc/CPU/Instruction%20Encoding/</loc>
+         <lastmod>2022-01-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+</urlset>

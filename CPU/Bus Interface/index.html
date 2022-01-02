@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://merryhime.github.io/gba-doc/CPU/Bus%20Interface/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+
+    
+    <title>Bus Interface - gba-doc</title>
+    
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/v4-shims.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
+    <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="../../css/base.min.css" rel="stylesheet">
+    <link href="../../css/cinder.min.css" rel="stylesheet">
+
+    
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+        
+    
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+        <![endif]-->
+
+    
+
+     
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+
+            
+              <a class="navbar-brand" href="../..">gba-doc</a>
+            
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="../..">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">CPU <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../">Index</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">Bus Interface</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../Instruction%20Encoding/">Instruction Encoding</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="next" href="../Instruction%20Encoding/">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/merryhime/gba-doc"/edit/master/docs/CPU/Bus Interface.md"><i class="fab fa-github"></i> Edit on GitHub</a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#cycle-type-signals">Cycle type signals</a></li>
+        <li class="first-level "><a href="#address-bus">Address bus</a></li>
+        <li class="first-level "><a href="#mas-bus">MAS bus</a></li>
+        <li class="first-level "><a href="#readwrite-signal">Read/Write signal</a></li>
+        <li class="first-level "><a href="#data-bus">Data bus</a></li>
+        <li class="first-level "><a href="#lock-signal">Lock signal</a></li>
+        <li class="first-level "><a href="#opcode-signal">Opcode signal</a></li>
+        <li class="first-level "><a href="#translate-signal">Translate signal</a></li>
+        <li class="first-level "><a href="#thumb-signal">Thumb signal</a></li>
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<h2 id="cycle-type-signals">Cycle type signals<a class="headerlink" href="#cycle-type-signals" title="Permanent link">&para;</a></h2>
+<p>There are four types of cycles, N, S, I, and C. The CPU specifies what the next cycle type is on the bus (i.e. it is piplined one cycle ahead) using two bits. They are as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Cycle Type</th>
+<th>nMREQ</th>
+<th>SEQ</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>N</td>
+<td>0</td>
+<td>0</td>
+<td>Nonsequential</td>
+</tr>
+<tr>
+<td>S</td>
+<td>0</td>
+<td>1</td>
+<td>Sequential</td>
+</tr>
+<tr>
+<td>I</td>
+<td>1</td>
+<td>0</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td>C</td>
+<td>1</td>
+<td>1</td>
+<td>Coprocessor register transfer</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>nMREQ = Not memory request<ul>
+<li>When low it indicates a memory access will happen the next cycle</li>
+</ul>
+</li>
+<li>SEQ = Sequential</li>
+</ul>
+<p>Both the above signals become valid during phase 1 and remain valid in phase 2 of the cycle prior to which the cycle it refers to.</p>
+<h2 id="address-bus">Address bus<a class="headerlink" href="#address-bus" title="Permanent link">&para;</a></h2>
+<p>A 32 bit bus. The address bus becomes valid during phase 2 of the cycle preceeding the memory access, and remains valid through phase 1 of the actual memory cycle.</p>
+<h2 id="mas-bus">MAS bus<a class="headerlink" href="#mas-bus" title="Permanent link">&para;</a></h2>
+<p>A two bit bus that encodes the size of the memory transfer. It becomes valid during phase 2 of the cycle preceeding the memory access, and remains valid through phase 1 of the actual memory cycle.</p>
+<h2 id="readwrite-signal">Read/Write signal<a class="headerlink" href="#readwrite-signal" title="Permanent link">&para;</a></h2>
+<p>One bit signal which indicates whether this is a read or write. It becomes valid during phase 2 of the cycle preceeding the memory access, and remains valid through phase 1 of the actual memory cycle.</p>
+<h2 id="data-bus">Data bus<a class="headerlink" href="#data-bus" title="Permanent link">&para;</a></h2>
+<p>A 32 bit bus.</p>
+<p>During read: Is an input to the CPU. Data must be valid at the end of phase 2.</p>
+<p>During write: Is an output from the CPU. Valid data appears during phase 1 of the cycle and remains valid through phase 2.</p>
+<h2 id="lock-signal">Lock signal<a class="headerlink" href="#lock-signal" title="Permanent link">&para;</a></h2>
+<p>Indicates that a swap instruction is in progress and the two memory cycles should be regarded as atomic. Becomes valid during phase 2 of the cycle before the first access and remains valid through phase 1 of the second memory access.</p>
+<h2 id="opcode-signal">Opcode signal<a class="headerlink" href="#opcode-signal" title="Permanent link">&para;</a></h2>
+<p>This signal indicates this is an instruction prefetch. It becomes valid during phase 2 of the cycle preceeding the memory access, and remains valid through phase 1 of the memory cycle.</p>
+<p>This signal is utilised by the GBA BIOS ROM for execute permission.</p>
+<h2 id="translate-signal">Translate signal<a class="headerlink" href="#translate-signal" title="Permanent link">&para;</a></h2>
+<p>Signalled during memory accesses in user mode. It becomes valid during phase 2 of the cycle preceeding the memory access, and remains valid through phase 1 of the memory cycle.</p>
+<h2 id="thumb-signal">Thumb signal<a class="headerlink" href="#thumb-signal" title="Permanent link">&para;</a></h2>
+<p>Indicates if the processor is executing in thumb mode. It becomes valid during phase 2 of the cycle preceeding the memory access, and remains valid through phase 1 of the memory cycle.</p></div>
+        
+        
+    </div>
+
+    
+      <footer class="col-md-12 text-center">
+          
+          
+            <hr>
+            <p>
+            <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</small>
+            </p>
+          
+
+          
+          
+      </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../../js/bootstrap-3.0.3.min.js"></script>
+
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <script>var base_url = "../.."</script>
+    
+    <script src="../../js/base.js"></script>
+    <script src="../../search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+</html>
